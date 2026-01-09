@@ -145,18 +145,262 @@ class(occ)
 summary(occ)
 ```
 
+## Get estimates
+
+Get estimates on the natural scale with `unmarked::backTransform`:
+
+::::: {.columns}
+
+:::: {.column width=50%}
+```{r}
+# Get detection (p) on the natural scale
+unmarked::backTransform(occ, type = "det")
+
+# Get occupancy (state parameter, psi) on the natural scale
+unmarked::backTransform(occ, type = "state")
+```
+::::
+
+:::: {.column width=50%}
+::: {.fragment}
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 6
+
+library(ggplot2)
+
+p_inf <- unmarked::predict(occ, 
+                           type = "det",
+                           backTransform = TRUE,
+                           newdata = data.frame(1))
+psi_inf <- unmarked::predict(occ, 
+                             type = "state",
+                             backTransform = TRUE,
+                             newdata = data.frame(1))
+
+umk_param_df <- data.frame(param = c("p", "p", "psi", "psi"),
+                           type = c("inferred", "true", "inferred", "true"),
+                           estimate = c(p_inf$Predicted, p,
+                                        psi_inf$Predicted, psi),
+                           min = c(p_inf$lower, NA,
+                                   psi_inf$lower, NA),
+                           max = c(p_inf$upper, NA,
+                                   psi_inf$upper, NA))
+
+ggplot(umk_param_df) +
+  geom_errorbar(data = subset(umk_param_df, type == "inferred"),
+                aes(xmin = min, xmax = max, y = param,
+                    color = type)) +
+  geom_point(aes(x = estimate, y = param,
+                 color = type)) +
+  theme_bw(base_size = 15) +
+  xlim(0, 1) +
+  theme(axis.title = element_blank(),
+        legend.position = "bottom") +
+  ggtitle("True and inferred occupancy parameters with unmarked")
+```
+:::
+:::: 
+
+:::::
+
 ## Inference with `cmdstanr`
 
-# Resources
+- [Stan](https://mc-stan.org/) Bayesian software (optimized algorithms for the MCMC samplers)
+- [`cmdstanr`](https://mc-stan.org/cmdstanr/) R package
 
+## Binomial model specification
 
+More efficient:
+$$n_i \sim Binom({n_{\text{visit}}}_i, z_i~p) \quad \text{and} \quad z_i \sim Bern(\psi)$$
 
-## Resources
+### Format data
+```{r}
+# Format data for Stan
+n <- sapply(y, sum) # number of detections
+nvisit <- sapply(y, length) # number of visits
 
-- [Quarto guide](https://quarto.org/docs/guide/)
-- [Markdown syntax](https://quarto.org/docs/authoring/markdown-basics.html)
-- [RevealJS guide](https://quarto.org/docs/presentations/revealjs/)
+# List of parameters for Stan
+dat <- list(M = M,
+            n = n,
+            nvisit = nvisit)
+```
 
+## Stan code
+
+Stan code blocks:
+```stan
+data {
+  // code block to define data variables
+}
+
+parameters {
+  // code block to define parameters
+}
+
+model {
+  // code block to infer parameters
+}
+```
+
+## data block
+
+Let's start by defining variables in the data block. Stan variables are typed (i.e. we must define their type manually with the statements before variables names). Here, we only need the 3 variables that we specified on our data list above.
+```stan
+data {
+  int<lower=1> M; // number of sites
+  array[M] int nvisit; // number of visits per sites-years
+  array[M] int<lower=0> n; // observations vector
+}
+```
+## parameters block
+
+Next, we define the parameters we want to infer in the parameters block. Here, they are defined on the logit scale because inferring unbounded parameters is more efficient in Stan.
+```stan
+parameters {
+  real psi_logit; // value of psi on the logit scale
+  real p_logit; // value of p on the logit scale
+}
+```
+## model block
+
+- Define the parameters priors: here, we use flat normal priors centered on zero with a standard deviation of 3. This amounts to initializing the log-posterior with a log-transformed normal density, which is what `target += normal_lpdf(param | 0, 3)` does.
+- (Optional) Define intermediate variables. Here, we define `nvi` as a shortcut for the number of visits for site $i$.
+- Specify the model. This is where it requires a bit of work, because Stan cannot model discrete variables, so we have to update the posterior probability density manually instead. Fortunately, it is fairly easy to write with respect to $p$ and $\psi$. Here, we won't go into the details of these computations
+
+```stan
+model {
+  // 1. Priors
+  target += normal_lpdf(psi_logit | 0, 3);
+  target += normal_lpdf(p_logit | 0, 3);
+
+  // 2. Variables
+  int nvi;
+
+  // 3. Model specification
+  for (i in 1:M) { // iterate over sites
+    nvi = nvisit[i]; // number of visits
+    if (n[i] > 0) { // the species was seen
+      // Update log-likelihood: species was detected | present
+      target += log_inv_logit(psi_logit) + 
+        binomial_logit_lpmf(n[i] | nvi, p_logit);
+    } else {
+      // Update log-likelihood: species was non-detected | present
+      // or non-detected | absent
+      target += log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(0 | nvi, p_logit), 
+        log1m_inv_logit(psi_logit));
+    }
+  }
+}
+```
+## Inference with `cmdstanr`
+
+```{r}
+#| echo: false
+#| output: false
+#| message: false
+
+library(here)
+
+post_folder <- here("data")
+stan_file <- file.path(post_folder, "model.stan")
+```
+
+- compile the Stan model using `cmdstan_model`, as shown in the code below. Here, we assume the Stan code above is written in a file, which path is stored in the `stan_file` variable in R.
+```{r}
+#| message: false
+library(cmdstanr)
+
+model <- cmdstanr::cmdstan_model(stan_file = stan_file)
+```
+- infer our `model` object, with the `$sample` method from the `CmdStanModel` class. 
+  - data list (`data`)
+  - number of burn-in iterations (`warmup`)
+  - the number of post-burn-in iterations (`iter_sampling`)
+  - number of chains and their parallelisation (`chains` and `parallel_chains`)
+```{r}
+#| output: false
+stanfit <- model$sample(data = dat,
+                        iter_warmup = 200,
+                        iter_sampling = 500,
+                        chains = 4,
+                        parallel_chains = 4)
+```
+
+## Get estimates
+
+Get estimates with `$summary`:
+
+::::: {.columns}
+
+:::: {.column width="50%"}
+```{r}
+(stan_inf <- stanfit$summary())
+```
+::::
+
+:::: {.column width="50%"}
+::: {.fragment}
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 6
+stan_param_df <- data.frame(param = c("p", "p", "psi", "psi"),
+                            type = c("inferred", "true", "inferred", "true"),
+                            estimate = c(stan_inf$mean[stan_inf$variable == "p"], p,
+                                         stan_inf$mean[stan_inf$variable == "psi"], psi),
+                            min = c(stan_inf$q5[stan_inf$variable == "p"], NA,
+                                    stan_inf$q5[stan_inf$variable == "psi"], NA),
+                            max = c(stan_inf$q95[stan_inf$variable == "p"], NA,
+                                    stan_inf$q95[stan_inf$variable == "psi"], NA))
+
+ggplot(stan_param_df) +
+  geom_errorbar(data = subset(stan_param_df, type == "inferred"),
+                aes(xmin = min, xmax = max, y = param,
+                    color = type)) +
+  geom_point(aes(x = estimate, y = param,
+                 color = type)) +
+  theme_bw(base_size = 15) +
+  xlim(0, 1) +
+  theme(axis.title = element_blank(),
+        legend.position = "bottom") +
+  ggtitle("True and inferred occupancy parameters with Stan")
+```
+:::
+::::
+:::::
+
+# Conclusion
+
+## Conclusion
+
+### What we have seen
+::: {.fragment}
+- simple occupancy model equations
+:::
+::: {.fragment}
+- simulate under an occupancy model in R
+:::
+::: {.fragment}
+- infer with the `unmarked` and `cmdstanr`
+:::
+
+::: {.fragment}
+### What's left
+
+- $p$ and $\psi$ often not constant: can be modeled as $\text{logit}(\psi_i) = \beta_0 + \beta_1 x_i$ or $\text{logit}(p_{ij}) = \beta_0 + \beta_1 x_{ij}$
+:::
+
+## References
+
+::: {#refs}
+:::
 <br>
 
-To use this template, visit the [**Wiki**](https://github.com/biodiversitydata/quarto-template/wiki).
+### Other resources
+
+- Richard A. Erickson's [GitHub repository](https://github.com/bbennie/StanOccupancyModelTutorials) with Stan occupancy models tutorials
+- Olivier Gimenez's [workshop](https://oliviergimenez.github.io/occupancy-workshop/) with resources on occupancy modelling with `unmarked`
+
+<br>
