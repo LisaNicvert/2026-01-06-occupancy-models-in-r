@@ -304,6 +304,7 @@ model {
 library(here)
 
 post_folder <- here("data")
+dir.create(post_folder)
 stan_file <- file.path(post_folder, "model.stan")
 ```
 

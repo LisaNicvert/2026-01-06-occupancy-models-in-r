@@ -15,6 +15,11 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
    
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++ make
+          
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         
@@ -30,7 +35,20 @@ jobs:
             any::unmarked
             any::ggplot2
             any::here
-            any::cmdstanr
+        
+      - name: Cache CmdStan
+        uses: actions/cache@v4
+        with:
+          path: ~/.cmdstan
+          key: cmdstan-${{ runner.os }}-v2
+
+      - name: Install cmdstanr
+        run: |
+          Rscript -e 'install.packages("cmdstanr", repos="https://mc-stan.org/r-packages/")'
+
+      - name: Install CmdStan
+        run: |
+          Rscript -e 'cmdstanr::install_cmdstan(cores = 2)'
             
       - name: Render qmd files
         run: |

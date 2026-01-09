@@ -24,3 +24,6 @@ index.html
 index_files/
 
 /.quarto/
+
+data/model.exe
+data/model.stan
