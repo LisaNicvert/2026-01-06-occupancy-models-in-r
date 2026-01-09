@@ -8,12 +8,10 @@
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <link href="index_files/libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="index_files/libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
-<link href="index_files/libs/quarto-contrib/academicons-1.9.2/all.css" rel="stylesheet">
-<link href="index_files/libs/quarto-contrib/academicons-1.9.2/size.css" rel="stylesheet"><meta charset="utf-8">
+<link href="index_files/libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <title>Presentation title</title>
+  <title>Occupancy models in R</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -97,7 +95,27 @@
     code span.va { color: #111111; } /* Variable */
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-7e9783838747aff8f3e1fd2788a0d82a.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -208,17 +226,17 @@
 <p><img data-src="images/logo-title-slide.png"></p>
 </div><!-- Title slide content --><div class="column information" style="width:68%;">
 <div class="title">
-<p>Quarto template</p>
+<p>Occupancy models in R</p>
 </div>
 <div class="subtitle">
-<p>HTML presentation w/ RevealJS framework</p>
+<p>Geek meeting 13th January 2026</p>
 </div>
 <div class="date">
 <p>January 2026</p>
 </div>
 <div class="columns authors">
 <div class="column author" style="width:32%;">
-<p>Nicolas Casajus<br> <a href="mailto:rdev.nc@gmail.com"><i class="fa-solid fa-envelope" aria-label="envelope"></i></a> <a href="https://nicolascasajus.fr"><i class="fa-solid fa-globe" aria-label="globe"></i></a> <a href="https://github.com/ahasverus"><i class="fa-brands fa-github" aria-label="github"></i></a> <a href="https://orcid.org/0000-0002-5537-5294"><i class="fa-brands fa-orcid" aria-label="orcid"></i></a> <a href="https://scholar.google.fr/citations?user=n1swa1UAAAAJ"><i class="ai  ai-google-scholar"></i></a></p>
+<p>Lisa Nicvert <a href="https://lisanicvert.github.io"><i class="fa-solid fa-globe" aria-label="globe"></i></a></p>
 </div><!-- Second author --><div class="column author" style="width:32%;">
 <!--
 Author name<br/>
@@ -239,7 +257,7 @@ Author name<br/>
 </div>
 <div class="columns affiliations">
 <div class="column affiliation" style="width:32%;">
-<p>Senior data scientist <br> <code><span class="citation" data-cites="FRB-CESAB">@FRB-CESAB</span></code> &nbsp; <a href="https://www.fondationbiodiversite.fr/en/about-the-foundation/le-cesab/"><i class="fa-solid fa-globe" aria-label="globe"></i></a> &nbsp; <a href="https://github.com/frbcesab"><i class="fa-brands fa-github" aria-label="github"></i></a></p>
+<p>Postdoctoral researcher <br> <code>@FRB-CESAB</code> &nbsp; <a href="https://www.fondationbiodiversite.fr/la-fondation/le-cesab/"><i class="fa-solid fa-globe" aria-label="globe"></i></a> &nbsp;</p>
 </div><!-- Second affiliation --><div class="column affiliation" style="width:32%;">
 <!--
  &nbsp;[Affiliation](affiliation-url)
@@ -259,139 +277,224 @@ Author name<br/>
 </div>
 <!-- Insert section 'Table of contents' -->
 </section>
-<section>
 <section id="table-of-contents" class="title-slide slide level1 center">
 <h1>Table of contents</h1>
-
-</section>
-<section id="table-of-contents-1" class="slide level2">
-<h2>Table of contents</h2>
 <p><br> <br> <br> <br> <br> <br></p>
 <div class="columns">
-<div class="column center" style="width:33%;">
-<p><i class="fa-solid fa-code fa-2x" aria-label="code"></i> <br> Section 1</p>
-</div><div class="column center" style="width:33%;">
-<p><i class="fa-brands fa-github fa-2x" aria-label="github"></i> <br> Section 2</p>
-</div><div class="column center" style="width:33%;">
-<p><i class="fa-solid fa-book fa-2x" aria-label="book"></i> <br> Resources</p>
+<div class="column center" style="width:20%;">
+<p><i class="fa-solid fa-sun fa-2x" aria-label="sun"></i> <br> Introduction</p>
+</div><div class="column center" style="width:20%;">
+<p><i class="fa-solid fa-square-root-variable fa-2x" aria-label="square-root-variable"></i> <br> Simple occupancy model</p>
+</div><div class="column center" style="width:20%;">
+<p><i class="fa-solid fa-code fa-2x" aria-label="code"></i> <br> Occupancy models in R</p>
+</div><div class="column center" style="width:20%;">
+<p><i class="fa-solid fa-moon fa-2x" aria-label="moon"></i> <br> Conclusion</p>
+</div><div class="column center" style="width:20%;">
+<p><i class="fa-solid fa-book fa-2x" aria-label="book"></i> <br> References</p>
 </div></div>
 <!-- Insert section 'Quarto basics' -->
+</section>
+
+<section>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
+
+</section>
+<section id="section" class="slide level2" data-background-image="images/bird.png">
+<h2></h2>
+</section>
+<section id="introduction-1" class="slide level2">
+<h2>Introduction</h2>
+<div class="columns">
+<div class="column center" style="width:50%;">
+<p><img data-src="images/occ.png" style="width:80.0%"></p>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>first published by <span class="citation" data-cites="mackenzie2002">MacKenzie et al. (<a href="#/resources-1" role="doc-biblioref" onclick="">2002</a>)</span> in the context of species occurrence modelling</li>
+<li>many extensions: dynamic occupancy <span class="citation" data-cites="mackenzie_estimating_2003">(<a href="#/resources-1" role="doc-biblioref" onclick="">MacKenzie et al. 2003</a>)</span>, multiple species <span class="citation" data-cites="rota_multispecies_2016">(<a href="#/resources-1" role="doc-biblioref" onclick="">Rota et al. 2016</a>)</span>, continuous detection process <span class="citation" data-cites="mackenzie_estimating_2003">(<a href="#/resources-1" role="doc-biblioref" onclick="">MacKenzie et al. 2003</a>)</span>…</li>
+<li>Here: original simple occupancy model.</li>
+</ul>
+</div></div>
 </section></section>
 <section>
-<section id="section-1" class="title-slide slide level1 center">
-<h1>Section 1</h1>
+<section id="simple-occupancy-model" class="title-slide slide level1 center">
+<h1>Simple occupancy model</h1>
 
 </section>
-<section id="slide-title" class="slide level2">
-<h2>Slide title</h2>
-<p>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit<sup>1</sup>…</p>
-<p><br></p>
+<section id="model" class="slide level2">
+<h2>Model</h2>
 <div class="columns">
-<div class="column" style="width:50%;">
-<p><strong>Left column</strong></p>
-<p>Neque porro quisquam est qui dolorem ipsum.</p>
-<p><img data-src="images/logo-title-slide.png" style="width:25.0%"></p>
-</div><div class="column center" style="width:50%;">
-<p><strong>Right column (content centered)</strong></p>
-<p>Neque porro quisquam est qui dolorem ipsum.</p>
-<p><img data-src="images/logo-title-slide.png" style="width:50.0%"></p>
+<div class="column" style="width:100%;">
+<p>For site <span class="math inline">\(i\)</span> and visit <span class="math inline">\(j\)</span>: <span class="math display">\[
+y_{ij} \sim Bern(z_i~p)
+\]</span> <span class="math display">\[
+z_i \sim Bern(\psi)
+\]</span></p>
+</div><div class="column center" style="width:100%;">
+<p><img data-src="images/diagram.png" style="width:80.0%"></p>
 </div></div>
-<p>Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit…</p>
-<aside><ol class="aside-footnotes"><li id="fn1"><p>This is a footnote.</p></li></ol></aside></section></section>
+</section></section>
 <section>
-<section id="section-2" class="title-slide slide level1 center">
-<h1>Section 2</h1>
+<section id="occupancy-models-in-r" class="title-slide slide level1 center">
+<h1>Occupancy models in R</h1>
 
 </section>
-<section id="slide-title-1" class="slide level2">
-<h2>Slide title</h2>
-<div class="columns">
-<div class="column" style="width:30%;">
-<p><strong>Left column</strong></p>
-<p>Neque porro quisquam est.</p>
-<p><img data-src="images/logo-title-slide.png" style="width:55.0%"></p>
-</div><div class="column" style="width:70%;">
-<p><strong>Right column</strong></p>
-<p>Neque porro quisquam est qui dolorem ipsum.</p>
-<table class="caption-top" style="width:100%;">
-<caption>Table 1: Table caption</caption>
-<colgroup>
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-<col style="width: 16%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Header 1</th>
-<th style="text-align: center;">Header 2</th>
-<th style="text-align: right;">Header 3</th>
-<th style="text-align: right;">Header 4</th>
-<th style="text-align: right;">Header 5</th>
-<th style="text-align: right;">Header 6</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Row 1 Col 1</td>
-<td style="text-align: center;">Row 1 Col 2</td>
-<td style="text-align: right;">Row 1 Col 3</td>
-<td style="text-align: right;">Row 1 Col 4</td>
-<td style="text-align: right;">Row 1 Col 5</td>
-<td style="text-align: right;">Row 1 Col 6</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Row 2 Col 1</td>
-<td style="text-align: center;">Row 2 Col 2</td>
-<td style="text-align: right;">Row 2 Col 3</td>
-<td style="text-align: right;">Row 2 Col 4</td>
-<td style="text-align: right;">Row 2 Col 5</td>
-<td style="text-align: right;">Row 2 Col 6</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Row 3 Col 1</td>
-<td style="text-align: center;">Row 3 Col 2</td>
-<td style="text-align: right;">Row 3 Col 3</td>
-<td style="text-align: right;">Row 3 Col 4</td>
-<td style="text-align: right;">Row 3 Col 5</td>
-<td style="text-align: right;">Row 3 Col 6</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Row 4 Col 1</td>
-<td style="text-align: center;">Row 4 Col 2</td>
-<td style="text-align: right;">Row 4 Col 3</td>
-<td style="text-align: right;">Row 4 Col 4</td>
-<td style="text-align: right;">Row 4 Col 5</td>
-<td style="text-align: right;">Row 4 Col 6</td>
-</tr>
-</tbody>
-</table>
-</div></div>
-<p><br></p>
-<p>Insert icons with <a href="https://fontawesome.com/search">Font Awesome</a> <i class="fa-brands fa-github" aria-label="github"></i> or <a href="https://jpswalsh.github.io/academicons/">Academicons</a> <i class="ai  ai-sci-hub"></i></p>
-<p><br></p>
-<div class="columns">
-<div class="column" style="width:50%;">
-
-</div><div class="column" style="width:50%;">
+<section id="simulation-code" class="slide level2">
+<h2>Simulation code</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="co"># Block code with unicode symbol ----</span></span>
-<span id="cb1-2"><a href=""></a>x <span class="ot">&lt;-</span> <span class="st">"I \u2665 Quarto"</span></span>
-<span id="cb1-3"><a href=""></a><span class="fu">print</span>(x)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href=""></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href=""></a></span>
+<span id="cb1-3"><a href=""></a>M <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># number of sites</span></span>
+<span id="cb1-4"><a href=""></a>p <span class="ot">&lt;-</span> <span class="fl">0.4</span> <span class="co"># detection probability</span></span>
+<span id="cb1-5"><a href=""></a>psi <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># occupancy</span></span>
+<span id="cb1-6"><a href=""></a></span>
+<span id="cb1-7"><a href=""></a><span class="co"># Simulate a number of visits for each site</span></span>
+<span id="cb1-8"><a href=""></a>nvisit <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> M, <span class="at">lambda =</span> <span class="dv">3</span>)</span>
+<span id="cb1-9"><a href=""></a>nvisit[nvisit <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Don't allow zero visits</span></span>
+<span id="cb1-10"><a href=""></a></span>
+<span id="cb1-11"><a href=""></a><span class="co"># Initialize vectors</span></span>
+<span id="cb1-12"><a href=""></a>z <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"numeric"</span>, <span class="at">length =</span> M)</span>
+<span id="cb1-13"><a href=""></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> M)</span>
+<span id="cb1-14"><a href=""></a></span>
+<span id="cb1-15"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># for each site</span></span>
+<span id="cb1-16"><a href=""></a>  <span class="co"># Simulate true presence/absence at site i</span></span>
+<span id="cb1-17"><a href=""></a>  zi <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> psi)</span>
+<span id="cb1-18"><a href=""></a>  </span>
+<span id="cb1-19"><a href=""></a>  <span class="co"># Simulate observed presence/absence at site i for all visits</span></span>
+<span id="cb1-20"><a href=""></a>  yij <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> nvisit[i], </span>
+<span id="cb1-21"><a href=""></a>                <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p<span class="sc">*</span>zi)</span>
+<span id="cb1-22"><a href=""></a>  </span>
+<span id="cb1-23"><a href=""></a>  z[i] <span class="ot">&lt;-</span> zi <span class="co"># True sites states</span></span>
+<span id="cb1-24"><a href=""></a>  y[[i]] <span class="ot">&lt;-</span> yij <span class="co"># Detections</span></span>
+<span id="cb1-25"><a href=""></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="simulation-code-1" class="slide level2">
+<h2>Simulation code</h2>
+<ul>
+<li>True proportion of occupied sites (<span class="math inline">\(z_i = 1\)</span>)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href=""></a><span class="fu">sum</span>(z)<span class="sc">/</span>M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "I ♥ Quarto"</code></pre>
+<pre><code>[1] 0.73</code></pre>
 </div>
 </div>
-</div></div>
+<ul>
+<li>Proportion of sites with at least one detection (naive occupancy)</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href=""></a><span class="fu">sum</span>(<span class="fu">sapply</span>(y, <span class="cf">function</span>(yi) <span class="fu">any</span>(yi <span class="sc">!=</span> <span class="dv">0</span>)))<span class="sc">/</span>M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.51</code></pre>
+</div>
+</div>
+</section>
+<section id="inference-hypotheses" class="slide level2">
+<h2>Inference hypotheses</h2>
+<div class="fragment">
+<ol type="1">
+<li>Repeated visits (parameter identifiability).</li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li>The site remains in the same state during the entire study period (closure assumption).</li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li>There are no false detections.</li>
+</ol>
+</div>
+</section>
+<section id="inference-with-unmarked" class="slide level2">
+<h2>Inference with <code>unmarked</code></h2>
+<p><a href="https://rbchan.github.io/unmarked/"><code>unmarked</code></a>: occupancy inference in R using maximum likelihood estimation (frequentist statistics).</p>
+</section>
+<section id="format-data" class="slide level2">
+<h2>Format data</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="fu">library</span>(unmarked)</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a><span class="co"># Format the list of observed detections y</span></span>
+<span id="cb6-4"><a href=""></a>max_visit <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">sapply</span>(y, length)) <span class="co"># get maximum number of detections</span></span>
+<span id="cb6-5"><a href=""></a></span>
+<span id="cb6-6"><a href=""></a><span class="co"># Transform y to matrix</span></span>
+<span id="cb6-7"><a href=""></a>y_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>,</span>
+<span id="cb6-8"><a href=""></a>                   <span class="at">nrow =</span> M,</span>
+<span id="cb6-9"><a href=""></a>                   <span class="at">ncol =</span> max_visit)</span>
+<span id="cb6-10"><a href=""></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># for each site</span></span>
+<span id="cb6-11"><a href=""></a>  nvisit_i <span class="ot">&lt;-</span> <span class="fu">length</span>(y[[i]]) <span class="co"># get number of visits</span></span>
+<span id="cb6-12"><a href=""></a>  y_matrix[i, <span class="dv">1</span><span class="sc">:</span>nvisit_i] <span class="ot">&lt;-</span> y[[i]] <span class="co"># fill n-th first rows with detection history</span></span>
+<span id="cb6-13"><a href=""></a>}</span>
+<span id="cb6-14"><a href=""></a></span>
+<span id="cb6-15"><a href=""></a><span class="co"># Each row contains the detections at a site, filled with NAs for </span></span>
+<span id="cb6-16"><a href=""></a><span class="co"># sites that have less visits than the most visited one</span></span>
+<span id="cb6-17"><a href=""></a><span class="fu">head</span>(y_matrix, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
+[1,]    0    0    0    1    1   NA   NA   NA
+[2,]    1    0    0    1    1    1   NA   NA
+[3,]    0    0   NA   NA   NA   NA   NA   NA</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="co"># Cast y_matrix to unmarkedFrameOccu</span></span>
+<span id="cb8-2"><a href=""></a>y_occu <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">unmarkedFrameOccu</span>(y_matrix)</span>
+<span id="cb8-3"><a href=""></a><span class="fu">head</span>(y_occu, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data frame representation of unmarkedFrame object.
+  y.1 y.2 y.3 y.4 y.5 y.6 y.7 y.8
+1   0   0   0   1   1  NA  NA  NA
+2   1   0   0   1   1   1  NA  NA
+3   0   0  NA  NA  NA  NA  NA  NA</code></pre>
+</div>
+</div>
+</section>
+<section id="inference-with-unmarkedoccu" class="slide level2">
+<h2>Inference with <code>unmarked::occu</code></h2>
+<ul>
+<li><code>formula</code>: gives the formulas for the logit of <span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span>.</li>
+<li><code>data</code>: observed detections</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="co"># Infer occupancy</span></span>
+<span id="cb10-2"><a href=""></a>occ <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">occu</span>(<span class="at">formula =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>, </span>
+<span id="cb10-3"><a href=""></a>                      <span class="at">data =</span> y_occu)</span>
+<span id="cb10-4"><a href=""></a></span>
+<span id="cb10-5"><a href=""></a><span class="fu">class</span>(occ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "unmarkedFitOccu"
+attr(,"package")
+[1] "unmarked"</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">summary</span>(occ)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+unmarked::occu(formula = ~1 ~ 1, data = y_occu)
+
+Occupancy (logit-scale):
+ Estimate    SE    z P(&gt;|z|)
+     1.03 0.406 2.54  0.0112
+
+Detection (logit-scale):
+ Estimate    SE     z  P(&gt;|z|)
+   -0.623 0.184 -3.38 0.000722
+
+AIC: 360.8983 
+Number of sites: 100</code></pre>
+</div>
+</div>
+</section>
+<section id="inference-with-cmdstanr" class="slide level2">
+<h2>Inference with <code>cmdstanr</code></h2>
 </section></section>
 <section>
 <section id="resources" class="title-slide slide level1 center">
 <h1>Resources</h1>
 
 </section>
-<section id="resources-1" class="slide level2">
+<section id="resources-1" class="slide level2 smaller scrollable">
 <h2>Resources</h2>
 <ul>
 <li><a href="https://quarto.org/docs/guide/">Quarto guide</a></li>
@@ -401,13 +504,23 @@ Author name<br/>
 <p><br></p>
 <p>To use this template, visit the <a href="https://github.com/biodiversitydata/quarto-template/wiki"><strong>Wiki</strong></a>.</p>
 
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-mackenzie_estimating_2003" class="csl-entry" role="listitem">
+MacKenzie, Darryl I., James D. Nichols, James E. Hines, Melinda G. Knutson, and Alan B. Franklin. 2003. <span>“Estimating Site Occupancy, Colonization, and Local Extinction When a Species Is Detected Imperfectly.”</span> <em>Ecology</em> 84 (8): 2200–2207. <a href="https://doi.org/10.1890/02-3090">https://doi.org/10.1890/02-3090</a>.
+</div>
+<div id="ref-mackenzie2002" class="csl-entry" role="listitem">
+MacKenzie, Darryl I., James D. Nichols, Gideon B. Lachman, Sam Droege, J. Andrew Royle, and Catherine A. Langtimm. 2002. <span>“Estimating Site Occupancy Rates When Detection Probabilities Are Less Than One.”</span> <em>Ecology</em> 83 (8): 2248–55. <a href="https://doi.org/10.1890/0012-9658(2002)083[2248:ESORWD]2.0.CO;2">https://doi.org/10.1890/0012-9658(2002)083[2248:ESORWD]2.0.CO;2</a>.
+</div>
+<div id="ref-rota_multispecies_2016" class="csl-entry" role="listitem">
+Rota, Christopher T., Marco A. R. Ferreira, Roland W. Kays, Tavis D. Forrester, Elizabeth L. Kalies, William J. McShea, Arielle W. Parsons, and Joshua J. Millspaugh. 2016. <span>“A Multispecies Occupancy Model for Two or More Interacting Species.”</span> <em>Methods in Ecology and Evolution</em> 7 (10): 1164–73. <a href="https://onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.12587">https://onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.12587</a>.
+</div>
+</div>
 </section></section>
-
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/logo-affiliation.png" class="slide-logo"></p>
 <div class="footer footer-default">
-<p><i class="fa-brands fa-github" aria-label="github"></i> &nbsp;<a href="https://github.com/biodiversitydata/quarto-template"><code>biodiversitydata/quarto-template</code></a> &nbsp; • &nbsp; <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> &nbsp;<a href="https://creativecommons.org/licenses/by/4.0/deed.en"><code>cc-by-4.0</code></a></p>
+<p><i class="fa-brands fa-github" aria-label="github"></i> &nbsp;<a href="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r"><code>LisaNicvert/2026-01-06-occupancy-models-in-r</code></a> &nbsp; • &nbsp; <i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> <i class="fa-brands fa-creative-commons-by" aria-label="creative-commons-by"></i> &nbsp;<a href="https://creativecommons.org/licenses/by/4.0/deed.en"><code>cc-by-4.0</code></a></p>
 </div>
 </div></div>
 
