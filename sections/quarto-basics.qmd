@@ -6,20 +6,25 @@
 ## Introduction
 
 
-:::: {.columns}
+::::: {.columns}
 
-::: {.column .center width=50%}
+:::: {.column .center width=50%}
 ![](images/occ.png){width=80%}
-:::
-
-::: {.column width=50%}
-- first published by @mackenzie2002 in the context of species occurrence modelling
-- many extensions: dynamic occupancy [@mackenzie_estimating_2003], multiple species [@rota_multispecies_2016], continuous detection process [@mackenzie_estimating_2003]...
-- Here: original simple occupancy model.
-
-:::
-
 ::::
+
+:::: {.column width=50%}
+::: {.fragment}
+- First published by @mackenzie2002 in the context of species occurrence modelling
+:::
+::: {.fragment}
+- Many extensions: dynamic occupancy [@mackenzie_estimating_2003], multiple species [@rota_multispecies_2016], continuous detection process [@mackenzie_estimating_2003]...
+:::
+::: {.fragment}
+- Here: original simple occupancy model.
+:::
+::::
+
+:::::
 
 # Simple occupancy model
 
