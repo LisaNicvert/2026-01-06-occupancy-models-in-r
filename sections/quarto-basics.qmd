@@ -296,7 +296,7 @@ model {
 ```
 ## Inference with `cmdstanr`
 
-```{r}
+```{r path}
 #| echo: false
 #| output: false
 #| message: false
@@ -309,7 +309,7 @@ stan_file <- file.path(post_folder, "model.stan")
 ```
 
 - compile the Stan model using `cmdstan_model`, as shown in the code below. Here, we assume the Stan code above is written in a file, which path is stored in the `stan_file` variable in R.
-```{r}
+```{r compile}
 #| message: false
 library(cmdstanr)
 
@@ -320,7 +320,7 @@ model <- cmdstanr::cmdstan_model(stan_file = stan_file)
   - number of burn-in iterations (`warmup`)
   - the number of post-burn-in iterations (`iter_sampling`)
   - number of chains and their parallelisation (`chains` and `parallel_chains`)
-```{r}
+```{r infer}
 #| output: false
 stanfit <- model$sample(data = dat,
                         iter_warmup = 200,
