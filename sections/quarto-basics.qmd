@@ -1,100 +1,151 @@
-# Section 1
+# Introduction
 
 
+## {background-image="images/bird.png"}
 
-## Slide title
+## Introduction
 
-Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit[^1]...
-
-<br>
 
 :::: {.columns}
-
-::: {.column width=50%}
-**Left column**
-
-Neque porro quisquam est qui dolorem ipsum.
-
-![](images/logo-title-slide.png){width=25%}
-:::
 
 ::: {.column .center width=50%}
-**Right column (content centered)**
+![](images/occ.png){width=80%}
+:::
 
-Neque porro quisquam est qui dolorem ipsum.
+::: {.column width=50%}
+- first published by @mackenzie2002 in the context of species occurrence modelling
+- many extensions: dynamic occupancy [@mackenzie_estimating_2003], multiple species [@rota_multispecies_2016], continuous detection process [@mackenzie_estimating_2003]...
+- Here: original simple occupancy model.
 
-![](images/logo-title-slide.png){width=50%}
 :::
 
 ::::
 
-Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...
-
-
-[^1]: This is a footnote.
+# Simple occupancy model
 
 
 
-# Section 2
-
-
-
-## Slide title
+## Model
 
 
 :::: {.columns}
 
-::: {.column width=30%}
-**Left column**
-
-Neque porro quisquam est.
-
-![](images/logo-title-slide.png){width=55%}
+::: {.column width=100%}
+For site $i$ and visit $j$:
+$$
+y_{ij} \sim Bern(z_i~p)
+$$
+$$
+z_i \sim Bern(\psi)
+$$ 
 :::
 
-::: {.column width=70%}
-**Right column**
-
-Neque porro quisquam est qui dolorem ipsum.
-
-| Header 1    | Header 2    | Header 3    | Header 4    | Header 5    | Header 6    |
-|:------------|:-----------:|------------:|------------:|------------:|------------:|
-| Row 1 Col 1 | Row 1 Col 2 | Row 1 Col 3 | Row 1 Col 4 | Row 1 Col 5 | Row 1 Col 6 |
-| Row 2 Col 1 | Row 2 Col 2 | Row 2 Col 3 | Row 2 Col 4 | Row 2 Col 5 | Row 2 Col 6 |
-| Row 3 Col 1 | Row 3 Col 2 | Row 3 Col 3 | Row 3 Col 4 | Row 3 Col 5 | Row 3 Col 6 |
-| Row 4 Col 1 | Row 4 Col 2 | Row 4 Col 3 | Row 4 Col 4 | Row 4 Col 5 | Row 4 Col 6 |
-
-: Table 1: Table caption
+::: {.column .center width=100%}
+![](images/diagram.png){width=80%}
 :::
 
 ::::
 
-<br>
+# Occupancy models in R
 
-Insert icons with [Font Awesome](https://fontawesome.com/search) {{< fa brands github >}} or [Academicons](https://jpswalsh.github.io/academicons/) {{< ai sci-hub >}}
+## Simulation code
 
-
-<br>
-
-:::: {.columns}
-
-::: {.column width=50%}
-:::
-
-::: {.column width=50%}
 ```{r}
-#| echo: true
-#| eval: true
+set.seed(42)
 
-# Block code with unicode symbol ----
-x <- "I \u2665 Quarto"
-print(x)
+M <- 100 # number of sites
+p <- 0.4 # detection probability
+psi <- 0.8 # occupancy
+
+# Simulate a number of visits for each site
+nvisit <- rpois(n = M, lambda = 3)
+nvisit[nvisit == 0] <- 1 # Don't allow zero visits
+
+# Initialize vectors
+z <- vector(mode = "numeric", length = M)
+y <- vector(mode = "list", length = M)
+
+for (i in 1:M) { # for each site
+  # Simulate true presence/absence at site i
+  zi <- rbinom(n = 1, size = 1, prob = psi)
+  
+  # Simulate observed presence/absence at site i for all visits
+  yij <- rbinom(n = nvisit[i], 
+                size = 1, prob = p*zi)
+  
+  z[i] <- zi # True sites states
+  y[[i]] <- yij # Detections
+}
 ```
+
+## Simulation code
+
+- True proportion of occupied sites ($z_i = 1$)
+```{r}
+sum(z)/M
+```
+- Proportion of sites with at least one detection (naive occupancy)
+```{r}
+sum(sapply(y, function(yi) any(yi != 0)))/M
+```
+
+## Inference hypotheses
+
+::: {.fragment}
+1.   Repeated visits (parameter identifiability).
+:::
+::: {.fragment}
+2.   The site remains in the same state during the entire study period (closure assumption).
+:::
+::: {.fragment}
+3.   There are no false detections.
 :::
 
-::::
+## Inference with `unmarked`
 
+[`unmarked`](https://rbchan.github.io/unmarked/): occupancy inference in R using maximum likelihood estimation (frequentist statistics).
 
+## Format data
+
+```{r}
+library(unmarked)
+
+# Format the list of observed detections y
+max_visit <- max(sapply(y, length)) # get maximum number of detections
+
+# Transform y to matrix
+y_matrix <- matrix(data = NA,
+                   nrow = M,
+                   ncol = max_visit)
+for (i in 1:M) { # for each site
+  nvisit_i <- length(y[[i]]) # get number of visits
+  y_matrix[i, 1:nvisit_i] <- y[[i]] # fill n-th first rows with detection history
+}
+
+# Each row contains the detections at a site, filled with NAs for 
+# sites that have less visits than the most visited one
+head(y_matrix, 3)
+
+# Cast y_matrix to unmarkedFrameOccu
+y_occu <- unmarked::unmarkedFrameOccu(y_matrix)
+head(y_occu, 3)
+```
+
+## Inference with `unmarked::occu`
+
+- `formula`: gives the formulas for the logit of $p$ and $\psi$.
+- `data`: observed detections
+
+```{r}
+# Infer occupancy
+occ <- unmarked::occu(formula = ~1 ~1, 
+                      data = y_occu)
+
+class(occ)
+summary(occ)
+```
+
+## Inference with `cmdstanr`
 
 # Resources
 

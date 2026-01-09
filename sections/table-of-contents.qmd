@@ -1,9 +1,5 @@
 # Table of contents
 
----
-
-## Table of contents
-
 <br>
 <br>
 <br>
@@ -13,22 +9,34 @@
 
 :::: { .columns }
 
-::: { .column .center width="33%"}
+::: { .column .center width="20%"}
+{{< fa sun size=2x >}}
+<br>
+Introduction
+:::
+
+::: { .column .center width="20%"}
+{{< fa square-root-variable size=2x >}}
+<br>
+Simple occupancy model
+:::
+
+::: { .column .center width="20%"}
 {{< fa code size=2x >}}
 <br>
-Section 1
+Occupancy models in R
 :::
 
-::: { .column .center width="33%"}
-{{< fa brands github size=2x >}}
+::: { .column .center width="20%"}
+{{< fa moon size=2x >}}
 <br>
-Section 2
+Conclusion
 :::
 
-::: { .column .center width="33%"}
+::: { .column .center width="20%"}
 {{< fa book size=2x >}}
 <br>
-Resources
+References
 :::
 
 ::::

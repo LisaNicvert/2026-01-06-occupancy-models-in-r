@@ -3,13 +3,15 @@ from: markdown+emoji
 format:
   revealjs:
     logo: images/logo-affiliation.png
-    footer: "{{< fa brands github >}} &nbsp;[`biodiversitydata/quarto-template`](https://github.com/biodiversitydata/quarto-template) &nbsp; &bull; &nbsp; {{< fa brands creative-commons >}} {{< fa brands creative-commons-by >}} &nbsp;[`cc-by-4.0`](https://creativecommons.org/licenses/by/4.0/deed.en)"
+    footer: "{{< fa brands github >}} &nbsp;[`LisaNicvert/2026-01-06-occupancy-models-in-r`](https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r) &nbsp; &bull; &nbsp; {{< fa brands creative-commons >}} {{< fa brands creative-commons-by >}} &nbsp;[`cc-by-4.0`](https://creativecommons.org/licenses/by/4.0/deed.en)"
     smaller: true
     auto-stretch: false
     chalkboard: true
     toc-depth: 1
+    echo: true
     theme: [default, "styles/main.scss"]
 engine: knitr
+bibliography: references.bib
 ---
 
 <!-- Insert section 'Title slide' -->

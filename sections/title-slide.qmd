@@ -11,11 +11,11 @@
 ::: {.column .information width="68%"}
 
 ::: {.title}
-Quarto template
+Occupancy models in R
 :::
 
 ::: {.subtitle}
-HTML presentation w/ RevealJS framework
+Geek meeting 13th January 2026
 :::
 
 ::: {.date}
@@ -32,12 +32,8 @@ invisible(Sys.setlocale("LC_TIME", olocale))
 :::: {.columns .authors}
 
 ::: {.column .author width="32%"}
-Nicolas Casajus<br/>
-[{{< fa envelope >}}](mailto:rdev.nc@gmail.com)
-[{{< fa globe >}}](https://nicolascasajus.fr)
-[{{< fa brands github >}}](https://github.com/ahasverus)
-[{{< fa brands orcid >}}](https://orcid.org/0000-0002-5537-5294)
-[{{< ai google-scholar >}}](https://scholar.google.fr/citations?user=n1swa1UAAAAJ)
+Lisa Nicvert
+[{{< fa globe >}}](https://lisanicvert.github.io)
 :::
 
 <!-- Second author -->
@@ -68,13 +64,12 @@ Author name<br/>
 :::: {.columns .affiliations}
 
 ::: {.column .affiliation width="32%"}
-Senior data scientist
+Postdoctoral researcher
 <br/>
-<code>@FRB-CESAB</code>
+<code>\@FRB-CESAB</code>
 &nbsp;
-[{{< fa globe >}}](https://www.fondationbiodiversite.fr/en/about-the-foundation/le-cesab/)
+[{{< fa globe >}}](https://www.fondationbiodiversite.fr/la-fondation/le-cesab/)
 &nbsp;
-[{{< fa brands github >}}](https://github.com/frbcesab)
 :::
 
 <!-- Second affiliation -->
