@@ -4,7 +4,7 @@
 
 <!-- Title slide logo -->
 ::: {.column .logo width="32%"}
-![](images/logo-title-slide.png)
+![](images/dragonfly.png)
 :::
 
 <!-- Title slide content -->
@@ -15,18 +15,11 @@ Occupancy models in R
 :::
 
 ::: {.subtitle}
-Geek meeting 13th January 2026
+Geek meeting
 :::
 
 ::: {.date}
-```{r}
-#| echo: false
-#| results: asis
-olocale <- Sys.getlocale("LC_TIME")
-invisible(Sys.setlocale("LC_TIME", "en_US.UTF-8"))
-cat(format(Sys.Date(), "%B %Y"))
-invisible(Sys.setlocale("LC_TIME", olocale))
-```
+January 13th, 2026
 :::
 
 :::: {.columns .authors}
