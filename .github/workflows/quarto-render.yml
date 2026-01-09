@@ -28,6 +28,9 @@ jobs:
           packages: 
             any::rmarkdown
             any::unmarked
+            any::ggplot2
+            any::here
+            any::cmdstanr
             
       - name: Render qmd files
         run: |
