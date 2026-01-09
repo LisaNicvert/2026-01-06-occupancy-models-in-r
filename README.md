@@ -42,18 +42,6 @@
   </a>
 </p>
 
-
-<!-- Table of content -->
-
-<p align="center">
-  <a href="#overview">Overview</a> •
-  <a href="#citation">Citation</a> •
-  <a href="#acknowledgments">Acknowledgments</a>
-</p>
-
-<br>
-
-
 ## Overview
 
 This repository contains a presentation on occupancy models in R.
@@ -61,7 +49,6 @@ This repository contains a presentation on occupancy models in R.
 ## Citation
 
 Nicvert L (2026) _Occupancy models in R_. Online presentation available at <https://lisanicvert.github.io/2026-01-06-occupancy-models-in-r>.
-
 
 ## Acknowledgments
 
