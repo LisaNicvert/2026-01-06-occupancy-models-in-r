@@ -1,66 +1,69 @@
 # Introduction
 
+## Presence $\neq$ detection
 
-## {background-image="images/bird.png"}
+::: {.column .center width="100%"}
+{{< video https://www.youtube.com/watch?v=rexnDhbtq7E height="500px" width="1200px" >}}
+:::
+
+## Present, but not detected 
+![_Photo by Caroline Kirk ([source](https://www.independent.co.uk/news/uk/wildlife-photographer-owl-camera-image-b1818585.html))_](images/bird.png){width=90%}
 
 ## Introduction
 
 
-::::: {.columns}
+:::: {.columns}
 
-:::: {.column .center width=50%}
-![](images/occ.png){width=80%}
-::::
+::: {.column .center width=50%}
+![](images/occ.png){width=100%}
+:::
 
-:::: {.column width=50%}
-::: {.fragment}
+::: {.column width=50%}
 - First published by @mackenzie2002 in the context of species occurrence modelling
-:::
-::: {.fragment}
 - Many extensions: dynamic occupancy [@mackenzie_estimating_2003], multiple species [@rota_multispecies_2016], continuous detection process [@mackenzie_estimating_2003]...
+- Here: original simple occupancy model
 :::
-::: {.fragment}
-- Here: original simple occupancy model.
-:::
-::::
 
-:::::
+::::
 
 # Simple occupancy model
 
-
-
 ## Model
-
 
 :::: {.columns}
 
+::: {.column .center width=100%}
+![](images/diagram.png){width=60%}
+:::
+
 ::: {.column width=100%}
+::: {.fragment}
 For site $i$ and visit $j$:
 $$
 y_{ij} \sim Bern(z_i~p)
 $$
 $$
 z_i \sim Bern(\psi)
-$$ 
+$$
 :::
-
-::: {.column .center width=100%}
-![](images/diagram.png){width=80%}
 :::
 
 ::::
 
 # Occupancy models in R
 
-## Simulation code
+## Simulate occupancy models in R
 
+:::: {.columns}
+
+::: {.column width=60%}
 ```{r}
+#| code-line-numbers: "1-9|11-25"
 set.seed(42)
 
-M <- 100 # number of sites
-p <- 0.4 # detection probability
-psi <- 0.8 # occupancy
+M <- 100 # Number of sites
+p <- 0.4 # Detection probability
+psi <- 0.8 # Occupancy
 
 # Simulate a number of visits for each site
 nvisit <- rpois(n = M, lambda = 3)
@@ -70,11 +73,12 @@ nvisit[nvisit == 0] <- 1 # Don't allow zero visits
 z <- vector(mode = "numeric", length = M)
 y <- vector(mode = "list", length = M)
 
-for (i in 1:M) { # for each site
+for (i in 1:M) { # For each site
   # Simulate true presence/absence at site i
   zi <- rbinom(n = 1, size = 1, prob = psi)
   
-  # Simulate observed presence/absence at site i for all visits
+  # Simulate observed presence/absence at site i 
+  # for all visits
   yij <- rbinom(n = nvisit[i], 
                 size = 1, prob = p*zi)
   
@@ -82,49 +86,75 @@ for (i in 1:M) { # for each site
   y[[i]] <- yij # Detections
 }
 ```
+:::
 
-## Simulation code
+::: {.column width=40%}
+![](images/diagram.png){width=100%}
+:::
+::::
 
+## Simulate occupancy models in R
+
+:::: {.nonincremental}
 - True proportion of occupied sites ($z_i = 1$)
 ```{r}
 sum(z)/M
 ```
+::: {.fragment}
 - Proportion of sites with at least one detection (naive occupancy)
 ```{r}
 sum(sapply(y, function(yi) any(yi != 0)))/M
 ```
+:::
+::::
 
 ## Inference hypotheses
 
-::: {.fragment}
-1.   Repeated visits (parameter identifiability).
-:::
-::: {.fragment}
-2.   The site remains in the same state during the entire study period (closure assumption).
-:::
-::: {.fragment}
-3.   There are no false detections.
-:::
+
+1.   Repeated visits (parameter identifiability)
+2.   Site remains in the same state during the entire study period (closure assumption)
+3.   No false detections
 
 ## Inference with `unmarked`
 
-[`unmarked`](https://rbchan.github.io/unmarked/): occupancy inference in R using maximum likelihood estimation (frequentist statistics).
+[`unmarked`](https://rbchan.github.io/unmarked/): R package for occupancy inference (maximum likelihood estimation = frequentist statistics).
 
-## Format data
+## Format data {auto-animate=true}
 
 ```{r}
 library(unmarked)
 
 # Format the list of observed detections y
-max_visit <- max(sapply(y, length)) # get maximum number of detections
+max_visit <- max(sapply(y, length)) # Get maximum number of detections
 
 # Transform y to matrix
 y_matrix <- matrix(data = NA,
                    nrow = M,
                    ncol = max_visit)
-for (i in 1:M) { # for each site
-  nvisit_i <- length(y[[i]]) # get number of visits
-  y_matrix[i, 1:nvisit_i] <- y[[i]] # fill n-th first rows with detection history
+for (i in 1:M) { # For each site
+  nvisit_i <- length(y[[i]]) # Get number of visits
+  y_matrix[i, 1:nvisit_i] <- y[[i]] # Fill n-th first rows with detection history
+}
+
+# Cast y_matrix to unmarkedFrameOccu
+y_occu <- unmarked::unmarkedFrameOccu(y_matrix)
+```
+
+## Format data {auto-animate=true}
+
+```{r}
+library(unmarked)
+
+# Format the list of observed detections y
+max_visit <- max(sapply(y, length)) # Get maximum number of detections
+
+# Transform y to matrix
+y_matrix <- matrix(data = NA,
+                   nrow = M,
+                   ncol = max_visit)
+for (i in 1:M) { # For each site
+  nvisit_i <- length(y[[i]]) # Get number of visits
+  y_matrix[i, 1:nvisit_i] <- y[[i]] # Fill n-th first rows with detection history
 }
 
 # Each row contains the detections at a site, filled with NAs for 
@@ -133,35 +163,65 @@ head(y_matrix, 3)
 
 # Cast y_matrix to unmarkedFrameOccu
 y_occu <- unmarked::unmarkedFrameOccu(y_matrix)
+```
+
+## Format data {auto-animate=true}
+
+```{r}
+library(unmarked)
+
+# Format the list of observed detections y
+max_visit <- max(sapply(y, length)) # Get maximum number of detections
+
+# Transform y to matrix
+y_matrix <- matrix(data = NA,
+                   nrow = M,
+                   ncol = max_visit)
+for (i in 1:M) { # For each site
+  nvisit_i <- length(y[[i]]) # Get number of visits
+  y_matrix[i, 1:nvisit_i] <- y[[i]] # Fill n-th first rows with detection history
+}
+
+# Each row contains the detections at a site, filled with NAs for 
+# sites that have less visits than the most visited one
+# head(y_matrix, 3)
+
+# Cast y_matrix to unmarkedFrameOccu
+y_occu <- unmarked::unmarkedFrameOccu(y_matrix)
 head(y_occu, 3)
 ```
 
 ## Inference with `unmarked::occu`
 
-- `formula`: gives the formulas for the logit of $p$ and $\psi$.
-- `data`: observed detections
-
 ```{r}
 # Infer occupancy
 occ <- unmarked::occu(formula = ~1 ~1, 
                       data = y_occu)
+```
+::: {.nonincremental}
+- `formula`: gives the formulas for the logit of $p$ and $\psi$.
+- `data`: observed detections
+:::
 
-class(occ)
+::: {.fragment}
+```{r}
 summary(occ)
 ```
+:::
 
 ## Get estimates
 
-Get estimates on the natural scale with `unmarked::backTransform`:
+Get estimates on the natural scale:
 
 ::::: {.columns}
 
 :::: {.column width=50%}
 ```{r}
-# Get detection (p) on the natural scale
+#| results: hold
+# Get detection (p)
 unmarked::backTransform(occ, type = "det")
 
-# Get occupancy (state parameter, psi) on the natural scale
+# Get occupancy (state parameter, psi)
 unmarked::backTransform(occ, type = "state")
 ```
 ::::
@@ -212,17 +272,13 @@ ggplot(umk_param_df) +
 
 ## Inference with `cmdstanr`
 
-- [Stan](https://mc-stan.org/) Bayesian software (optimized algorithms for the MCMC samplers)
+- [Stan](https://mc-stan.org/): Bayesian software (optimized algorithms for the MCMC samplers)
 - [`cmdstanr`](https://mc-stan.org/cmdstanr/) R package
-
-## Binomial model specification
-
-More efficient:
+- Binomial model specification (more efficient):
 $$n_i \sim Binom({n_{\text{visit}}}_i, z_i~p) \quad \text{and} \quad z_i \sim Bern(\psi)$$
 
-### Format data
+## Format data
 ```{r}
-# Format data for Stan
 n <- sapply(y, sum) # number of detections
 nvisit <- sapply(y, length) # number of visits
 
@@ -232,49 +288,50 @@ dat <- list(M = M,
             nvisit = nvisit)
 ```
 
-## Stan code
+## Stan code blocks
 
-Stan code blocks:
 ```stan
 data {
-  // code block to define data variables
+  // Code block to define data variables
 }
 
 parameters {
-  // code block to define parameters
+  // Code block to define parameters
 }
 
 model {
-  // code block to infer parameters
+  // Code block to infer parameters
 }
 ```
 
-## data block
+## Data block
 
-Let's start by defining variables in the data block. Stan variables are typed (i.e. we must define their type manually with the statements before variables names). Here, we only need the 3 variables that we specified on our data list above.
+Defining variables (typed)
+
 ```stan
 data {
-  int<lower=1> M; // number of sites
-  array[M] int nvisit; // number of visits per sites-years
-  array[M] int<lower=0> n; // observations vector
+  int<lower=1> M; // Number of sites
+  array[M] int nvisit; // Number of visits per sites-years
+  array[M] int<lower=0> n; // Observations vector
 }
 ```
-## parameters block
+## Parameters block
 
-Next, we define the parameters we want to infer in the parameters block. Here, they are defined on the logit scale because inferring unbounded parameters is more efficient in Stan.
+For parameters we want to infer (logit scale, more efficient in Stan)
+
 ```stan
 parameters {
   real psi_logit; // value of psi on the logit scale
   real p_logit; // value of p on the logit scale
 }
+
 ```
-## model block
+## Model block
 
-- Define the parameters priors: here, we use flat normal priors centered on zero with a standard deviation of 3. This amounts to initializing the log-posterior with a log-transformed normal density, which is what `target += normal_lpdf(param | 0, 3)` does.
-- (Optional) Define intermediate variables. Here, we define `nvi` as a shortcut for the number of visits for site $i$.
-- Specify the model. This is where it requires a bit of work, because Stan cannot model discrete variables, so we have to update the posterior probability density manually instead. Fortunately, it is fairly easy to write with respect to $p$ and $\psi$. Here, we won't go into the details of these computations
-
-```stan
+::: {.nonincremental}
+1. Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density
+:::
+```{.stan code-line-numbers="2-4"}
 model {
   // 1. Priors
   target += normal_lpdf(psi_logit | 0, 3);
@@ -299,7 +356,73 @@ model {
   }
 }
 ```
-## Inference with `cmdstanr`
+
+## Model block
+
+::: {.nonincremental}
+1. Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density
+2. (Optional) Intermediate variables: `nvi` (number of visits for site $i$)
+:::
+```{.stan code-line-numbers="6-7"}
+model {
+  // 1. Priors
+  target += normal_lpdf(psi_logit | 0, 3);
+  target += normal_lpdf(p_logit | 0, 3);
+
+  // 2. Variables
+  int nvi;
+
+  // 3. Model specification
+  for (i in 1:M) { // iterate over sites
+    nvi = nvisit[i]; // number of visits
+    if (n[i] > 0) { // the species was seen
+      // Update log-likelihood: species was detected | present
+      target += log_inv_logit(psi_logit) + 
+        binomial_logit_lpmf(n[i] | nvi, p_logit);
+    } else {
+      // Update log-likelihood: species was non-detected | present
+      // or non-detected | absent
+      target += log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(0 | nvi, p_logit), 
+        log1m_inv_logit(psi_logit));
+    }
+  }
+}
+```
+
+## Model block
+
+::: {.nonincremental}
+1. Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density
+2. (Optional) Intermediate variables: `nvi` (number of visits for site $i$)
+3. Model: Stan cannot model discrete variables, so we have to update the posterior probability density manually
+:::
+```{.stan code-line-numbers="9-23|"}
+model {
+  // 1. Priors
+  target += normal_lpdf(psi_logit | 0, 3);
+  target += normal_lpdf(p_logit | 0, 3);
+
+  // 2. Variables
+  int nvi;
+
+  // 3. Model specification
+  for (i in 1:M) { // iterate over sites
+    nvi = nvisit[i]; // number of visits
+    if (n[i] > 0) { // the species was seen
+      // Update log-likelihood: species was detected | present
+      target += log_inv_logit(psi_logit) + 
+        binomial_logit_lpmf(n[i] | nvi, p_logit);
+    } else {
+      // Update log-likelihood: species was non-detected | present
+      // or non-detected | absent
+      target += log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(0 | nvi, p_logit), 
+        log1m_inv_logit(psi_logit));
+    }
+  }
+}
+```
+
+## Inference with `$sample`
 
 ```{r path}
 #| echo: false
@@ -313,30 +436,33 @@ post_folder <- here("data")
 stan_file <- file.path(post_folder, "model.stan")
 ```
 
-- compile the Stan model using `cmdstan_model`, as shown in the code below. Here, we assume the Stan code above is written in a file, which path is stored in the `stan_file` variable in R.
+:::: {.nonincremental}
+- compile the Stan model (Stan code is written in a file)
+
 ```{r compile}
 #| message: false
 library(cmdstanr)
 
 model <- cmdstanr::cmdstan_model(stan_file = stan_file)
 ```
-- infer our `model` object, with the `$sample` method from the `CmdStanModel` class. 
-  - data list (`data`)
-  - number of burn-in iterations (`warmup`)
-  - the number of post-burn-in iterations (`iter_sampling`)
-  - number of chains and their parallelisation (`chains` and `parallel_chains`)
+::: {.fragment}
+- infer the `model` object
 ```{r infer}
 #| output: false
-stanfit <- model$sample(data = dat,
-                        iter_warmup = 200,
-                        iter_sampling = 500,
-                        chains = 4,
-                        parallel_chains = 4)
+stanfit <- model$sample(data = dat, # Data list
+                        iter_warmup = 200, # Number of burn-in iterations
+                        iter_sampling = 500, # Number of post-burn-in iterations
+                        chains = 4, # Number of chains
+                        parallel_chains = 4 # Number of parallel cores
+                        )
 ```
+:::
+
+::::
 
 ## Get estimates
 
-Get estimates with `$summary`:
+Get parameter estimates:
 
 ::::: {.columns}
 
@@ -377,26 +503,27 @@ ggplot(stan_param_df) +
 ::::
 :::::
 
-# Conclusion
+# Conclusion {auto-animate=true}
 
-## Conclusion
+## Conclusion {auto-animate=true}
 
-### What we have seen
-::: {.fragment}
 - simple occupancy model equations
-:::
-::: {.fragment}
-- simulate under an occupancy model in R
-:::
-::: {.fragment}
-- infer with the `unmarked` and `cmdstanr`
-:::
-
-::: {.fragment}
-### What's left
-
+- infer with `unmarked` and `cmdstanr`
 - $p$ and $\psi$ often not constant: can be modeled as $\text{logit}(\psi_i) = \beta_0 + \beta_1 x_i$ or $\text{logit}(p_{ij}) = \beta_0 + \beta_1 x_{ij}$
+- soon a blog post on the [tips and tricks blog](https://frbcesab.github.io/tips-and-tricks/)!
+
+:::: {.column .center width="100%"}
+::: {.fragment .fade-in}
+::: {.fragment .grow}
+::: {.fragment .shrink}
+<br><br><br>
+<p style="font-size:3em">Thank you!</p>
 :::
+:::
+:::
+::::
+
+# References
 
 ## References
 
@@ -405,8 +532,8 @@ ggplot(stan_param_df) +
 <br>
 
 ### Other resources
-
+::: {.nonincremental}
 - Richard A. Erickson's [GitHub repository](https://github.com/bbennie/StanOccupancyModelTutorials) with Stan occupancy models tutorials
 - Olivier Gimenez's [workshop](https://oliviergimenez.github.io/occupancy-workshop/) with resources on occupancy modelling with `unmarked`
-
+:::
 <br>

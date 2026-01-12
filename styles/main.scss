@@ -167,6 +167,13 @@ blockquote p {
   border-left: 5px solid #cccccc;
 }
 
+.sourceCode {
+  font-size: initial !important;
+}
+
+.cell-output-stdout {
+  font-size: 1.2em !important;
+}
 /*
 blockquote p::before {
   content: "\27A4";

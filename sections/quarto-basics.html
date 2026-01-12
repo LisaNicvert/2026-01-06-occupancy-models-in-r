@@ -132,26 +132,34 @@ window.Quarto = {
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<section id="section" class="level2" data-background-image="images/bird.png">
-<h2 data-background-image="images/bird.png" class="anchored" data-anchor-id="section"></h2>
+<section id="presence-neq-detection" class="level2">
+<h2 class="anchored" data-anchor-id="presence-neq-detection">Presence <span class="math inline">\(\neq\)</span> detection</h2>
+<div class="column center" style="width:100%;">
+<div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/rexnDhbtq7E" width="1200px" height="500px" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+</div>
+</section>
+<section id="present-but-not-detected" class="level2">
+<h2 class="anchored" data-anchor-id="present-but-not-detected">Present, but not detected</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/bird.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption><em>Photo by Caroline Kirk (<a href="https://www.independent.co.uk/news/uk/wildlife-photographer-owl-camera-image-b1818585.html">source</a>)</em></figcaption>
+</figure>
+</div>
 </section>
 <section id="introduction-1" class="level2">
 <h2 class="anchored" data-anchor-id="introduction-1">Introduction</h2>
 <div class="columns">
 <div class="column center" style="width:50%;">
-<p><img src="images/occ.png" class="img-fluid" style="width:80.0%"></p>
+<p><img src="images/occ.png" class="img-fluid" style="width:100.0%"></p>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>First published by <span class="citation" data-cites="mackenzie2002">@mackenzie2002</span> in the context of species occurrence modelling ::: {.fragment}</li>
+<li>First published by <span class="citation" data-cites="mackenzie2002">@mackenzie2002</span> in the context of species occurrence modelling</li>
 <li>Many extensions: dynamic occupancy <span class="citation" data-cites="mackenzie_estimating_2003">[@mackenzie_estimating_2003]</span>, multiple species <span class="citation" data-cites="rota_multispecies_2016">[@rota_multispecies_2016]</span>, continuous detection process <span class="citation" data-cites="mackenzie_estimating_2003">[@mackenzie_estimating_2003]</span>…</li>
-</ul>
-</div><div class="fragment">
-<ul>
-<li>Here: original simple occupancy model.</li>
+<li>Here: original simple occupancy model</li>
 </ul>
 </div>
 </div>
-<p>::::</p>
 </section>
 </section>
 <section id="simple-occupancy-model" class="level1">
@@ -159,52 +167,62 @@ window.Quarto = {
 <section id="model" class="level2">
 <h2 class="anchored" data-anchor-id="model">Model</h2>
 <div class="columns">
-<div class="column" style="width:100%;">
+<div class="column center" style="width:100%;">
+<p><img src="images/diagram.png" class="img-fluid" style="width:60.0%"></p>
+</div><div class="column" style="width:100%;">
+<div class="fragment">
 <p>For site <span class="math inline">\(i\)</span> and visit <span class="math inline">\(j\)</span>: <span class="math display">\[
 y_{ij} \sim Bern(z_i~p)
 \]</span> <span class="math display">\[
 z_i \sim Bern(\psi)
 \]</span></p>
-</div><div class="column center" style="width:100%;">
-<p><img src="images/diagram.png" class="img-fluid" style="width:80.0%"></p>
+</div>
 </div>
 </div>
 </section>
 </section>
 <section id="occupancy-models-in-r" class="level1">
 <h1>Occupancy models in R</h1>
-<section id="simulation-code" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-code">Simulation code</h2>
+<section id="simulate-occupancy-models-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-occupancy-models-in-r">Simulate occupancy models in R</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>M <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># number of sites</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.4</span> <span class="co"># detection probability</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>psi <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># occupancy</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate a number of visits for each site</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>nvisit <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> M, <span class="at">lambda =</span> <span class="dv">3</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>nvisit[nvisit <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Don't allow zero visits</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize vectors</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"numeric"</span>, <span class="at">length =</span> M)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> M)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># for each site</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate true presence/absence at site i</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  zi <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> psi)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulate observed presence/absence at site i for all visits</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  yij <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> nvisit[i], </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p<span class="sc">*</span>zi)</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  z[i] <span class="ot">&lt;-</span> zi <span class="co"># True sites states</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  y[[i]] <span class="ot">&lt;-</span> yij <span class="co"># Detections</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a>M <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># Number of sites</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>p <span class="ot">&lt;-</span> <span class="fl">0.4</span> <span class="co"># Detection probability</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>psi <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="co"># Occupancy</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co"># Simulate a number of visits for each site</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a>nvisit <span class="ot">&lt;-</span> <span class="fu">rpois</span>(<span class="at">n =</span> M, <span class="at">lambda =</span> <span class="dv">3</span>)</span>
+<span id="cb1-9"><a href="#cb1-9"></a>nvisit[nvisit <span class="sc">==</span> <span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="co"># Don't allow zero visits</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="co"># Initialize vectors</span></span>
+<span id="cb1-12"><a href="#cb1-12"></a>z <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"numeric"</span>, <span class="at">length =</span> M)</span>
+<span id="cb1-13"><a href="#cb1-13"></a>y <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"list"</span>, <span class="at">length =</span> M)</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># For each site</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a>  <span class="co"># Simulate true presence/absence at site i</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>  zi <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> psi)</span>
+<span id="cb1-18"><a href="#cb1-18"></a>  </span>
+<span id="cb1-19"><a href="#cb1-19"></a>  <span class="co"># Simulate observed presence/absence at site i </span></span>
+<span id="cb1-20"><a href="#cb1-20"></a>  <span class="co"># for all visits</span></span>
+<span id="cb1-21"><a href="#cb1-21"></a>  yij <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> nvisit[i], </span>
+<span id="cb1-22"><a href="#cb1-22"></a>                <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p<span class="sc">*</span>zi)</span>
+<span id="cb1-23"><a href="#cb1-23"></a>  </span>
+<span id="cb1-24"><a href="#cb1-24"></a>  z[i] <span class="ot">&lt;-</span> zi <span class="co"># True sites states</span></span>
+<span id="cb1-25"><a href="#cb1-25"></a>  y[[i]] <span class="ot">&lt;-</span> yij <span class="co"># Detections</span></span>
+<span id="cb1-26"><a href="#cb1-26"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div><div class="column" style="width:40%;">
+<p><img src="images/diagram.png" class="img-fluid" style="width:100.0%"></p>
+</div>
 </div>
 </section>
-<section id="simulation-code-1" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-code-1">Simulation code</h2>
+<section id="simulate-occupancy-models-in-r-1" class="level2">
+<h2 class="anchored" data-anchor-id="simulate-occupancy-models-in-r-1">Simulate occupancy models in R</h2>
+<div class="nonincremental">
 <ul>
 <li>True proportion of occupied sites (<span class="math inline">\(z_i = 1\)</span>)</li>
 </ul>
@@ -214,6 +232,7 @@ z_i \sim Bern(\psi)
 <pre><code>[1] 0.73</code></pre>
 </div>
 </div>
+<div class="fragment">
 <ul>
 <li>Proportion of sites with at least one detection (naive occupancy)</li>
 </ul>
@@ -223,58 +242,96 @@ z_i \sim Bern(\psi)
 <pre><code>[1] 0.51</code></pre>
 </div>
 </div>
+</div>
+</div>
 </section>
 <section id="inference-hypotheses" class="level2">
 <h2 class="anchored" data-anchor-id="inference-hypotheses">Inference hypotheses</h2>
-<div class="fragment">
 <ol type="1">
-<li>Repeated visits (parameter identifiability).</li>
+<li>Repeated visits (parameter identifiability)</li>
+<li>Site remains in the same state during the entire study period (closure assumption)</li>
+<li>No false detections</li>
 </ol>
-</div>
-<div class="fragment">
-<ol start="2" type="1">
-<li>The site remains in the same state during the entire study period (closure assumption).</li>
-</ol>
-</div>
-<div class="fragment">
-<ol start="3" type="1">
-<li>There are no false detections.</li>
-</ol>
-</div>
 </section>
 <section id="inference-with-unmarked" class="level2">
 <h2 class="anchored" data-anchor-id="inference-with-unmarked">Inference with <code>unmarked</code></h2>
-<p><a href="https://rbchan.github.io/unmarked/"><code>unmarked</code></a>: occupancy inference in R using maximum likelihood estimation (frequentist statistics).</p>
+<p><a href="https://rbchan.github.io/unmarked/"><code>unmarked</code></a>: R package for occupancy inference (maximum likelihood estimation = frequentist statistics).</p>
 </section>
-<section id="format-data" class="level2">
-<h2 class="anchored" data-anchor-id="format-data">Format data</h2>
+<section id="format-data" class="level2" data-auto-animate="true">
+<h2 data-auto-animate="true" class="anchored" data-anchor-id="format-data">Format data</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(unmarked)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the list of observed detections y</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>max_visit <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">sapply</span>(y, length)) <span class="co"># get maximum number of detections</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>max_visit <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">sapply</span>(y, length)) <span class="co"># Get maximum number of detections</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform y to matrix</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>y_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">nrow =</span> M,</span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ncol =</span> max_visit)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># for each site</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  nvisit_i <span class="ot">&lt;-</span> <span class="fu">length</span>(y[[i]]) <span class="co"># get number of visits</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  y_matrix[i, <span class="dv">1</span><span class="sc">:</span>nvisit_i] <span class="ot">&lt;-</span> y[[i]] <span class="co"># fill n-th first rows with detection history</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># For each site</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  nvisit_i <span class="ot">&lt;-</span> <span class="fu">length</span>(y[[i]]) <span class="co"># Get number of visits</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  y_matrix[i, <span class="dv">1</span><span class="sc">:</span>nvisit_i] <span class="ot">&lt;-</span> y[[i]] <span class="co"># Fill n-th first rows with detection history</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Each row contains the detections at a site, filled with NAs for </span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co"># sites that have less visits than the most visited one</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_matrix, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast y_matrix to unmarkedFrameOccu</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>y_occu <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">unmarkedFrameOccu</span>(y_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="format-data-1" class="level2" data-auto-animate="true">
+<h2 data-auto-animate="true" class="anchored" data-anchor-id="format-data-1">Format data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(unmarked)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the list of observed detections y</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>max_visit <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">sapply</span>(y, length)) <span class="co"># Get maximum number of detections</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform y to matrix</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>y_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">nrow =</span> M,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ncol =</span> max_visit)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># For each site</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  nvisit_i <span class="ot">&lt;-</span> <span class="fu">length</span>(y[[i]]) <span class="co"># Get number of visits</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  y_matrix[i, <span class="dv">1</span><span class="sc">:</span>nvisit_i] <span class="ot">&lt;-</span> y[[i]] <span class="co"># Fill n-th first rows with detection history</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Each row contains the detections at a site, filled with NAs for </span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># sites that have less visits than the most visited one</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_matrix, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8]
 [1,]    0    0    0    1    1   NA   NA   NA
 [2,]    1    0    0    1    1    1   NA   NA
 [3,]    0    0   NA   NA   NA   NA   NA   NA</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast y_matrix to unmarkedFrameOccu</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>y_occu <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">unmarkedFrameOccu</span>(y_matrix)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_occu, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast y_matrix to unmarkedFrameOccu</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y_occu <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">unmarkedFrameOccu</span>(y_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="format-data-2" class="level2" data-auto-animate="true">
+<h2 data-auto-animate="true" class="anchored" data-anchor-id="format-data-2">Format data</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(unmarked)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Format the list of observed detections y</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>max_visit <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="fu">sapply</span>(y, length)) <span class="co"># Get maximum number of detections</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform y to matrix</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>y_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="cn">NA</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">nrow =</span> M,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ncol =</span> max_visit)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>M) { <span class="co"># For each site</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  nvisit_i <span class="ot">&lt;-</span> <span class="fu">length</span>(y[[i]]) <span class="co"># Get number of visits</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  y_matrix[i, <span class="dv">1</span><span class="sc">:</span>nvisit_i] <span class="ot">&lt;-</span> y[[i]] <span class="co"># Fill n-th first rows with detection history</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Each row contains the detections at a site, filled with NAs for </span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># sites that have less visits than the most visited one</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># head(y_matrix, 3)</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast y_matrix to unmarkedFrameOccu</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>y_occu <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">unmarkedFrameOccu</span>(y_matrix)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(y_occu, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Data frame representation of unmarkedFrame object.
   y.1 y.2 y.3 y.4 y.5 y.6 y.7 y.8
@@ -286,22 +343,20 @@ z_i \sim Bern(\psi)
 </section>
 <section id="inference-with-unmarkedoccu" class="level2">
 <h2 class="anchored" data-anchor-id="inference-with-unmarkedoccu">Inference with <code>unmarked::occu</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Infer occupancy</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>occ <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">occu</span>(<span class="at">formula =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>, </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> y_occu)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="nonincremental">
 <ul>
 <li><code>formula</code>: gives the formulas for the logit of <span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span>.</li>
 <li><code>data</code>: observed detections</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Infer occupancy</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>occ <span class="ot">&lt;-</span> unmarked<span class="sc">::</span><span class="fu">occu</span>(<span class="at">formula =</span> <span class="sc">~</span><span class="dv">1</span> <span class="sc">~</span><span class="dv">1</span>, </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> y_occu)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(occ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "unmarkedFitOccu"
-attr(,"package")
-[1] "unmarked"</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(occ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="fragment">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(occ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -319,27 +374,27 @@ AIC: 360.8983
 Number of sites: 100</code></pre>
 </div>
 </div>
+</div>
 </section>
 <section id="get-estimates" class="level2">
 <h2 class="anchored" data-anchor-id="get-estimates">Get estimates</h2>
-<p>Get estimates on the natural scale with <code>unmarked::backTransform</code>:</p>
+<p>Get estimates on the natural scale:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get detection (p) on the natural scale</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>unmarked<span class="sc">::</span><span class="fu">backTransform</span>(occ, <span class="at">type =</span> <span class="st">"det"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get detection (p)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>unmarked<span class="sc">::</span><span class="fu">backTransform</span>(occ, <span class="at">type =</span> <span class="st">"det"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Get occupancy (state parameter, psi)</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>unmarked<span class="sc">::</span><span class="fu">backTransform</span>(occ, <span class="at">type =</span> <span class="st">"state"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Backtransformed linear combination(s) of Detection estimate(s)
 
  Estimate     SE LinComb (Intercept)
     0.349 0.0419  -0.623           1
 
-Transformation: logistic </code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get occupancy (state parameter, psi) on the natural scale</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>unmarked<span class="sc">::</span><span class="fu">backTransform</span>(occ, <span class="at">type =</span> <span class="st">"state"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Backtransformed linear combination(s) of Occupancy estimate(s)
+Transformation: logistic 
+Backtransformed linear combination(s) of Occupancy estimate(s)
 
  Estimate     SE LinComb (Intercept)
     0.737 0.0788    1.03           1
@@ -353,7 +408,7 @@ Transformation: logistic </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="quarto-basics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="quarto-basics_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -365,124 +420,183 @@ Transformation: logistic </code></pre>
 <section id="inference-with-cmdstanr" class="level2">
 <h2 class="anchored" data-anchor-id="inference-with-cmdstanr">Inference with <code>cmdstanr</code></h2>
 <ul>
-<li><a href="https://mc-stan.org/">Stan</a> Bayesian software (optimized algorithms for the MCMC samplers)</li>
+<li><a href="https://mc-stan.org/">Stan</a>: Bayesian software (optimized algorithms for the MCMC samplers)</li>
 <li><a href="https://mc-stan.org/cmdstanr/"><code>cmdstanr</code></a> R package</li>
+<li>Binomial model specification (more efficient): <span class="math display">\[n_i \sim Binom({n_{\text{visit}}}_i, z_i~p) \quad \text{and} \quad z_i \sim Bern(\psi)\]</span></li>
 </ul>
 </section>
-<section id="binomial-model-specification" class="level2">
-<h2 class="anchored" data-anchor-id="binomial-model-specification">Binomial model specification</h2>
-<p>More efficient: <span class="math display">\[n_i \sim Binom({n_{\text{visit}}}_i, z_i~p) \quad \text{and} \quad z_i \sim Bern(\psi)\]</span></p>
-<section id="format-data-1" class="level3">
-<h3 class="anchored" data-anchor-id="format-data-1">Format data</h3>
+<section id="format-data-3" class="level2">
+<h2 class="anchored" data-anchor-id="format-data-3">Format data</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Format data for Stan</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">sapply</span>(y, sum) <span class="co"># number of detections</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>nvisit <span class="ot">&lt;-</span> <span class="fu">sapply</span>(y, length) <span class="co"># number of visits</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co"># List of parameters for Stan</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">M =</span> M,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> n,</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">nvisit =</span> nvisit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">sapply</span>(y, sum) <span class="co"># number of detections</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>nvisit <span class="ot">&lt;-</span> <span class="fu">sapply</span>(y, length) <span class="co"># number of visits</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># List of parameters for Stan</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">M =</span> M,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">n =</span> n,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">nvisit =</span> nvisit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-<section id="stan-code" class="level2">
-<h2 class="anchored" data-anchor-id="stan-code">Stan code</h2>
-<p>Stan code blocks:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// code block to define data variables</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// code block to define parameters</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// code block to infer parameters</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="stan-code-blocks" class="level2">
+<h2 class="anchored" data-anchor-id="stan-code-blocks">Stan code blocks</h2>
+<div class="sourceCode" id="cb18"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Code block to define data variables</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Code block to define parameters</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Code block to infer parameters</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="data-block" class="level2">
-<h2 class="anchored" data-anchor-id="data-block">data block</h2>
-<p>Let’s start by defining variables in the data block. Stan variables are typed (i.e.&nbsp;we must define their type manually with the statements before variables names). Here, we only need the 3 variables that we specified on our data list above.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; M; <span class="co">// number of sites</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[M] <span class="dt">int</span> nvisit; <span class="co">// number of visits per sites-years</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[M] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; n; <span class="co">// observations vector</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 class="anchored" data-anchor-id="data-block">Data block</h2>
+<p>Defining variables (typed)</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; M; <span class="co">// Number of sites</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[M] <span class="dt">int</span> nvisit; <span class="co">// Number of visits per sites-years</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[M] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; n; <span class="co">// Observations vector</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="parameters-block" class="level2">
-<h2 class="anchored" data-anchor-id="parameters-block">parameters block</h2>
-<p>Next, we define the parameters we want to infer in the parameters block. Here, they are defined on the logit scale because inferring unbounded parameters is more efficient in Stan.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> psi_logit; <span class="co">// value of psi on the logit scale</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> p_logit; <span class="co">// value of p on the logit scale</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 class="anchored" data-anchor-id="parameters-block">Parameters block</h2>
+<p>For parameters we want to infer (logit scale, more efficient in Stan)</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> psi_logit; <span class="co">// value of psi on the logit scale</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> p_logit; <span class="co">// value of p on the logit scale</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="model-block" class="level2">
-<h2 class="anchored" data-anchor-id="model-block">model block</h2>
-<ul>
-<li>Define the parameters priors: here, we use flat normal priors centered on zero with a standard deviation of 3. This amounts to initializing the log-posterior with a log-transformed normal density, which is what <code>target += normal_lpdf(param | 0, 3)</code> does.</li>
-<li>(Optional) Define intermediate variables. Here, we define <code>nvi</code> as a shortcut for the number of visits for site <span class="math inline">\(i\)</span>.</li>
-<li>Specify the model. This is where it requires a bit of work, because Stan cannot model discrete variables, so we have to update the posterior probability density manually instead. Fortunately, it is fairly easy to write with respect to <span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span>. Here, we won’t go into the details of these computations</li>
-</ul>
-<div class="sourceCode" id="cb22"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 1. Priors</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">target +=</span> normal_lpdf(psi_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">target +=</span> normal_lpdf(p_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 2. Variables</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span> nvi;</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// 3. Model specification</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:M) { <span class="co">// iterate over sites</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    nvi = nvisit[i]; <span class="co">// number of visits</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n[i] &gt; <span class="dv">0</span>) { <span class="co">// the species was seen</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Update log-likelihood: species was detected | present</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>      <span class="kw">target +=</span> log_inv_logit(psi_logit) + </span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>        binomial_logit_lpmf(n[i] | nvi, p_logit);</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Update log-likelihood: species was non-detected | present</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>      <span class="co">// or non-detected | absent</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>      <span class="kw">target +=</span> log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(<span class="dv">0</span> | nvi, p_logit), </span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>        log1m_inv_logit(psi_logit));</span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="inference-with-cmdstanr-1" class="level2">
-<h2 class="anchored" data-anchor-id="inference-with-cmdstanr-1">Inference with <code>cmdstanr</code></h2>
-<ul>
-<li>compile the Stan model using <code>cmdstan_model</code>, as shown in the code below. Here, we assume the Stan code above is written in a file, which path is stored in the <code>stan_file</code> variable in R.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>(<span class="at">stan_file =</span> stan_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 class="anchored" data-anchor-id="model-block">Model block</h2>
+<div class="nonincremental">
+<ol type="1">
+<li>Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density</li>
+</ol>
 </div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb21-1"><a href="#cb21-1"></a><span class="kw">model</span> {</span>
+<span id="cb21-2"><a href="#cb21-2"></a>  <span class="co">// 1. Priors</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="kw">target +=</span> normal_lpdf(psi_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="kw">target +=</span> normal_lpdf(p_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb21-5"><a href="#cb21-5"></a></span>
+<span id="cb21-6"><a href="#cb21-6"></a>  <span class="co">// 2. Variables</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>  <span class="dt">int</span> nvi;</span>
+<span id="cb21-8"><a href="#cb21-8"></a></span>
+<span id="cb21-9"><a href="#cb21-9"></a>  <span class="co">// 3. Model specification</span></span>
+<span id="cb21-10"><a href="#cb21-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:M) { <span class="co">// iterate over sites</span></span>
+<span id="cb21-11"><a href="#cb21-11"></a>    nvi = nvisit[i]; <span class="co">// number of visits</span></span>
+<span id="cb21-12"><a href="#cb21-12"></a>    <span class="cf">if</span> (n[i] &gt; <span class="dv">0</span>) { <span class="co">// the species was seen</span></span>
+<span id="cb21-13"><a href="#cb21-13"></a>      <span class="co">// Update log-likelihood: species was detected | present</span></span>
+<span id="cb21-14"><a href="#cb21-14"></a>      <span class="kw">target +=</span> log_inv_logit(psi_logit) + </span>
+<span id="cb21-15"><a href="#cb21-15"></a>        binomial_logit_lpmf(n[i] | nvi, p_logit);</span>
+<span id="cb21-16"><a href="#cb21-16"></a>    } <span class="cf">else</span> {</span>
+<span id="cb21-17"><a href="#cb21-17"></a>      <span class="co">// Update log-likelihood: species was non-detected | present</span></span>
+<span id="cb21-18"><a href="#cb21-18"></a>      <span class="co">// or non-detected | absent</span></span>
+<span id="cb21-19"><a href="#cb21-19"></a>      <span class="kw">target +=</span> log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(<span class="dv">0</span> | nvi, p_logit), </span>
+<span id="cb21-20"><a href="#cb21-20"></a>        log1m_inv_logit(psi_logit));</span>
+<span id="cb21-21"><a href="#cb21-21"></a>    }</span>
+<span id="cb21-22"><a href="#cb21-22"></a>  }</span>
+<span id="cb21-23"><a href="#cb21-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="model-block-1" class="level2">
+<h2 class="anchored" data-anchor-id="model-block-1">Model block</h2>
+<div class="nonincremental">
+<ol type="1">
+<li>Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density</li>
+<li>(Optional) Intermediate variables: <code>nvi</code> (number of visits for site <span class="math inline">\(i\)</span>)</li>
+</ol>
+</div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb22-1"><a href="#cb22-1"></a><span class="kw">model</span> {</span>
+<span id="cb22-2"><a href="#cb22-2"></a>  <span class="co">// 1. Priors</span></span>
+<span id="cb22-3"><a href="#cb22-3"></a>  <span class="kw">target +=</span> normal_lpdf(psi_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb22-4"><a href="#cb22-4"></a>  <span class="kw">target +=</span> normal_lpdf(p_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb22-5"><a href="#cb22-5"></a></span>
+<span id="cb22-6"><a href="#cb22-6"></a>  <span class="co">// 2. Variables</span></span>
+<span id="cb22-7"><a href="#cb22-7"></a>  <span class="dt">int</span> nvi;</span>
+<span id="cb22-8"><a href="#cb22-8"></a></span>
+<span id="cb22-9"><a href="#cb22-9"></a>  <span class="co">// 3. Model specification</span></span>
+<span id="cb22-10"><a href="#cb22-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:M) { <span class="co">// iterate over sites</span></span>
+<span id="cb22-11"><a href="#cb22-11"></a>    nvi = nvisit[i]; <span class="co">// number of visits</span></span>
+<span id="cb22-12"><a href="#cb22-12"></a>    <span class="cf">if</span> (n[i] &gt; <span class="dv">0</span>) { <span class="co">// the species was seen</span></span>
+<span id="cb22-13"><a href="#cb22-13"></a>      <span class="co">// Update log-likelihood: species was detected | present</span></span>
+<span id="cb22-14"><a href="#cb22-14"></a>      <span class="kw">target +=</span> log_inv_logit(psi_logit) + </span>
+<span id="cb22-15"><a href="#cb22-15"></a>        binomial_logit_lpmf(n[i] | nvi, p_logit);</span>
+<span id="cb22-16"><a href="#cb22-16"></a>    } <span class="cf">else</span> {</span>
+<span id="cb22-17"><a href="#cb22-17"></a>      <span class="co">// Update log-likelihood: species was non-detected | present</span></span>
+<span id="cb22-18"><a href="#cb22-18"></a>      <span class="co">// or non-detected | absent</span></span>
+<span id="cb22-19"><a href="#cb22-19"></a>      <span class="kw">target +=</span> log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(<span class="dv">0</span> | nvi, p_logit), </span>
+<span id="cb22-20"><a href="#cb22-20"></a>        log1m_inv_logit(psi_logit));</span>
+<span id="cb22-21"><a href="#cb22-21"></a>    }</span>
+<span id="cb22-22"><a href="#cb22-22"></a>  }</span>
+<span id="cb22-23"><a href="#cb22-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="model-block-2" class="level2">
+<h2 class="anchored" data-anchor-id="model-block-2">Model block</h2>
+<div class="nonincremental">
+<ol type="1">
+<li>Priors: flat normal priors centered on zero = initializing the log-posterior with a log-transformed normal density</li>
+<li>(Optional) Intermediate variables: <code>nvi</code> (number of visits for site <span class="math inline">\(i\)</span>)</li>
+<li>Model: Stan cannot model discrete variables, so we have to update the posterior probability density manually</li>
+</ol>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource stan number-lines code-with-copy"><code class="sourceCode stan"><span id="cb23-1"><a href="#cb23-1"></a><span class="kw">model</span> {</span>
+<span id="cb23-2"><a href="#cb23-2"></a>  <span class="co">// 1. Priors</span></span>
+<span id="cb23-3"><a href="#cb23-3"></a>  <span class="kw">target +=</span> normal_lpdf(psi_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb23-4"><a href="#cb23-4"></a>  <span class="kw">target +=</span> normal_lpdf(p_logit | <span class="dv">0</span>, <span class="dv">3</span>);</span>
+<span id="cb23-5"><a href="#cb23-5"></a></span>
+<span id="cb23-6"><a href="#cb23-6"></a>  <span class="co">// 2. Variables</span></span>
+<span id="cb23-7"><a href="#cb23-7"></a>  <span class="dt">int</span> nvi;</span>
+<span id="cb23-8"><a href="#cb23-8"></a></span>
+<span id="cb23-9"><a href="#cb23-9"></a>  <span class="co">// 3. Model specification</span></span>
+<span id="cb23-10"><a href="#cb23-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:M) { <span class="co">// iterate over sites</span></span>
+<span id="cb23-11"><a href="#cb23-11"></a>    nvi = nvisit[i]; <span class="co">// number of visits</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a>    <span class="cf">if</span> (n[i] &gt; <span class="dv">0</span>) { <span class="co">// the species was seen</span></span>
+<span id="cb23-13"><a href="#cb23-13"></a>      <span class="co">// Update log-likelihood: species was detected | present</span></span>
+<span id="cb23-14"><a href="#cb23-14"></a>      <span class="kw">target +=</span> log_inv_logit(psi_logit) + </span>
+<span id="cb23-15"><a href="#cb23-15"></a>        binomial_logit_lpmf(n[i] | nvi, p_logit);</span>
+<span id="cb23-16"><a href="#cb23-16"></a>    } <span class="cf">else</span> {</span>
+<span id="cb23-17"><a href="#cb23-17"></a>      <span class="co">// Update log-likelihood: species was non-detected | present</span></span>
+<span id="cb23-18"><a href="#cb23-18"></a>      <span class="co">// or non-detected | absent</span></span>
+<span id="cb23-19"><a href="#cb23-19"></a>      <span class="kw">target +=</span> log_sum_exp(log_inv_logit(psi_logit) + binomial_logit_lpmf(<span class="dv">0</span> | nvi, p_logit), </span>
+<span id="cb23-20"><a href="#cb23-20"></a>        log1m_inv_logit(psi_logit));</span>
+<span id="cb23-21"><a href="#cb23-21"></a>    }</span>
+<span id="cb23-22"><a href="#cb23-22"></a>  }</span>
+<span id="cb23-23"><a href="#cb23-23"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="inference-with-sample" class="level2">
+<h2 class="anchored" data-anchor-id="inference-with-sample">Inference with <code>$sample</code></h2>
+<div class="nonincremental">
 <ul>
-<li>infer our <code>model</code> object, with the <code>$sample</code> method from the <code>CmdStanModel</code> class.
-<ul>
-<li>data list (<code>data</code>)</li>
-<li>number of burn-in iterations (<code>warmup</code>)</li>
-<li>the number of post-burn-in iterations (<code>iter_sampling</code>)</li>
-<li>number of chains and their parallelisation (<code>chains</code> and <code>parallel_chains</code>)</li>
-</ul></li>
+<li>compile the Stan model (Stan code is written in a file)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>stanfit <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> dat,</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter_warmup =</span> <span class="dv">200</span>,</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter_sampling =</span> <span class="dv">500</span>,</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">chains =</span> <span class="dv">4</span>,</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">parallel_chains =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>(<span class="at">stan_file =</span> stan_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<ul>
+<li>infer the <code>model</code> object</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>stanfit <span class="ot">&lt;-</span> model<span class="sc">$</span><span class="fu">sample</span>(<span class="at">data =</span> dat, <span class="co"># Data list</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter_warmup =</span> <span class="dv">200</span>, <span class="co"># Number of burn-in iterations</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">iter_sampling =</span> <span class="dv">500</span>, <span class="co"># Number of post-burn-in iterations</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">chains =</span> <span class="dv">4</span>, <span class="co"># Number of chains</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">parallel_chains =</span> <span class="dv">4</span> <span class="co"># Number of parallel cores</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="get-estimates-1" class="level2">
 <h2 class="anchored" data-anchor-id="get-estimates-1">Get estimates</h2>
-<p>Get estimates with <code>$summary</code>:</p>
+<p>Get parameter estimates:</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(stan_inf <span class="ot">&lt;-</span> stanfit<span class="sc">$</span><span class="fu">summary</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>(stan_inf <span class="ot">&lt;-</span> stanfit<span class="sc">$</span><span class="fu">summary</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 10
   variable      mean   median     sd    mad       q5      q95  rhat ess_bulk
@@ -501,7 +615,7 @@ Transformation: logistic </code></pre>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="quarto-basics_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="quarto-basics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -511,49 +625,47 @@ Transformation: logistic </code></pre>
 </div>
 </section>
 </section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
-<section id="conclusion-1" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion-1">Conclusion</h2>
-<section id="what-we-have-seen" class="level3">
-<h3 class="anchored" data-anchor-id="what-we-have-seen">What we have seen</h3>
-<div class="fragment">
+<section id="conclusion" class="level1" data-auto-animate="true">
+<h1 data-auto-animate="true">Conclusion</h1>
+<section id="conclusion-1" class="level2" data-auto-animate="true">
+<h2 data-auto-animate="true" class="anchored" data-anchor-id="conclusion-1">Conclusion</h2>
 <ul>
 <li>simple occupancy model equations</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>simulate under an occupancy model in R</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>infer with the <code>unmarked</code> and <code>cmdstanr</code></li>
-</ul>
-</div>
-</section>
-<div class="fragment">
-<section id="whats-left" class="level3">
-<h3 class="anchored" data-anchor-id="whats-left">What’s left</h3>
-<ul>
 <li><span class="math inline">\(p\)</span> and <span class="math inline">\(\psi\)</span> often not constant: can be modeled as <span class="math inline">\(\text{logit}(\psi_i) = \beta_0 + \beta_1 x_i\)</span> or <span class="math inline">\(\text{logit}(p_{ij}) = \beta_0 + \beta_1 x_{ij}\)</span></li>
+<li>soon a blogpost on the <a href="https://frbcesab.github.io/tips-and-tricks/">tips and tricks blog</a>!</li>
 </ul>
-</section>
+<div class="column center" style="width:100%;">
+<div class="fragment fade-in">
+<div class="fragment grow">
+<div class="fragment shrink">
+<br><br><br>
+<p style="font-size:3em">
+Thank you!
+</p>
+</div>
+</div>
+</div>
 </div>
 </section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<section id="references-1" class="level2">
+<h2 class="anchored" data-anchor-id="references-1">References</h2>
 <div id="refs" role="list">
 
 </div>
 <p><br></p>
 <section id="other-resources" class="level3">
 <h3 class="anchored" data-anchor-id="other-resources">Other resources</h3>
+<div class="nonincremental">
 <ul>
 <li>Richard A. Erickson’s <a href="https://github.com/bbennie/StanOccupancyModelTutorials">GitHub repository</a> with Stan occupancy models tutorials</li>
 <li>Olivier Gimenez’s <a href="https://oliviergimenez.github.io/occupancy-workshop/">workshop</a> with resources on occupancy modelling with <code>unmarked</code></li>
 </ul>
+</div>
 <p><br></p>
 </section>
 </section>

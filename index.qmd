@@ -9,6 +9,8 @@ format:
     chalkboard: true
     toc-depth: 1
     echo: true
+    incremental: true
+    code-block-height: 450px
     theme: [default, "styles/main.scss"]
 engine: knitr
 bibliography: references.bib
