@@ -9,8 +9,7 @@
 
 <br>
 <p align="center">
-  <a href="https://lisanicvert.github.io/2026-01-06-occupancy-models-in-r" target="_blank"><b>View
-presentation</b></a>
+  <a href="https://lisanicvert.github.io/2026-01-06-occupancy-models-in-r" target="_blank"><b>View presentation</b></a>
 </p>
 <br>
 
