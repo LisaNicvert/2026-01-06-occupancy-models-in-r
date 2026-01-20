@@ -44,7 +44,8 @@
 ## Overview
 
 This repository contains a presentation on occupancy models in R. 
-The associated blog post is available on [FRB-CESAB's blog](https://frbcesab.github.io/tips-and-tricks/posts/2026-01-06-occupancy-models-in-r/).
+The associated [blog post](https://frbcesab.github.io/tips-and-tricks/posts/2026-01-06-occupancy-models-in-r/) 
+is available on FRB-CESAB's blog.
 
 ## Citation
 
