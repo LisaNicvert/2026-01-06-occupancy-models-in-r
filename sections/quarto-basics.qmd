@@ -510,7 +510,7 @@ ggplot(stan_param_df) +
 - simple occupancy model equations
 - infer with `unmarked` and `cmdstanr`
 - $p$ and $\psi$ often not constant: can be modeled as $\text{logit}(\psi_i) = \beta_0 + \beta_1 x_i$ or $\text{logit}(p_{ij}) = \beta_0 + \beta_1 x_{ij}$
-- soon a blog post on the [tips and tricks blog](https://frbcesab.github.io/tips-and-tricks/)!
+- [blog post](https://frbcesab.github.io/tips-and-tricks/posts/2026-01-06-occupancy-models-in-r/) on the [Tips and tricks blog](https://frbcesab.github.io/tips-and-tricks/)!
 
 :::: {.column .center width="100%"}
 ::: {.fragment .fade-in}
