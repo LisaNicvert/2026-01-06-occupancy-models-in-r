@@ -18,25 +18,26 @@ presentation</b></a>
 
 <p align="center">
 
-  <!-- Quarto --> <a href="https://quarto.org/">
-  <img src="https://img.shields.io/badge/Made%20with-Quarto-blue.svg" alt="Quarto"/>
+  <!-- Quarto --> 
+  <a href="https://quarto.org/">
+    <img src="https://img.shields.io/badge/Made%20with-Quarto-blue.svg" alt="Quarto"/>
   </a>
   
   <!-- License -->
   <a href="https://choosealicense.com/licenses/cc-by-4.0/">
-  <img src="https://img.shields.io/badge/License-CC%20BY%204.0-green.svg" alt="License CC BY 4.0"/>
+    <img src="https://img.shields.io/badge/License-CC%20BY%204.0-green.svg" alt="License CC BY 4.0"/>
   </a>
   
   <br/>
   
   <!-- Quarto render -->
   <a href="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/quarto-render.yml">
-  <img src="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/quarto-render.yml/badge.svg" alt="GHA render"/>
+    <img src="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/quarto-render.yml/badge.svg" alt="GHA render"/>
   </a>
   
   <!-- GitHub deployment -->
   <a href="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/pages/pages-build-deployment">
-  <img src="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/pages/pages-build-deployment/badge.svg" alt="GHA deploy"/>
+    <img src="https://github.com/LisaNicvert/2026-01-06-occupancy-models-in-r/actions/workflows/pages/pages-build-deployment/badge.svg" alt="GHA deploy"/>
   </a>
 
 </p>
